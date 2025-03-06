@@ -4,6 +4,9 @@ plugins {
     id("com.google.devtools.ksp")
     // Add the Google services Gradle plugin (Firebase Auth)
     id("com.google.gms.google-services")
+    // Hilt
+    id("com.google.dagger.hilt.android")
+    id("kotlin-kapt")
 }
 
 android {
@@ -74,6 +77,7 @@ dependencies {
     val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:$room_version")
     ksp("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
 
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.5.0"))
@@ -83,4 +87,16 @@ dependencies {
     // Compose navigation
     val nav_version = "2.8.8"
     implementation("androidx.navigation:navigation-compose:$nav_version")
+
+    // Viewmodel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
+    implementation("androidx.activity:activity-ktx:1.10.1")
+
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+    implementation ("androidx.hilt:hilt-navigation-compose:1.2.0")
+}
+kapt {
+    correctErrorTypes = true
 }
