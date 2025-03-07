@@ -27,6 +27,7 @@ import androidx.navigation.NavController
 import ie.setu.orderreceiver.R
 import ie.setu.orderreceiver.data.entities.MenuItem
 import ie.setu.orderreceiver.ui.viewmodels.MenuViewModel
+import ie.setu.orderreceiver.utils.Categories
 
 @Composable
 fun Menu(
@@ -44,14 +45,6 @@ fun Menu(viewModel: MenuViewModel) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(menuItems) { item ->
             MenuItemRow(menuItem = item)
-        }
-        item {
-            Button(onClick = {
-                val newItem = MenuItem(name = "New Dish", price = 9.99, category = "Appetizer")
-                viewModel.addMenuItem(newItem)
-            }) {
-                Text("Add Menu Item")
-            }
         }
     }
 }
@@ -104,7 +97,7 @@ fun PreviewMenuItemRow() {
             name = "Cheeseburger",
             description = "A delicious beef cheeseburger with lettuce and tomato",
             price = 8.99,
-            category = "Mains",
+            category = Categories.DESSERTS,
             imageUri = "https://example.com/images/cheeseburger.jpg",
             available = true,
             timestamp = System.currentTimeMillis()
