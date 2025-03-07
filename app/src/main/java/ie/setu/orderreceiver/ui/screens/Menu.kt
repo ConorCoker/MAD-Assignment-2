@@ -29,7 +29,7 @@ import ie.setu.orderreceiver.data.entities.MenuItem
 import ie.setu.orderreceiver.ui.viewmodels.MenuViewModel
 
 @Composable
-fun Home(
+fun Menu(
     navController: NavController,
     viewModel: MenuViewModel
 ) {
