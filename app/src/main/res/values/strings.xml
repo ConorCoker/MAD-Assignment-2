@@ -8,4 +8,23 @@
     <string name="menu">Menu</string>
     <string name="orders">Orders</string>
     <string name="add_to_menu">Add To Menu</string>
+    <string name="starters">Starters</string>
+    <string name="main_course">Main Course</string>
+    <string name="desserts">Desserts</string>
+    <string name="beverages">Beverages</string>
+    <string name="sides">Sides</string>
+    <string name="salads">Salads</string>
+    <string name="soups">Soups</string>
+    <string name="seafood">Seafood</string>
+    <string name="vegetarian">Vegetarian</string>
+    <string name="breakfast">Breakfast</string>
+    <string name="grill">Grill</string>
+    <string name="pasta">Pasta</string>
+    <string name="pizza">Pizza</string>
+    <string name="pick_category">Pick a category</string>
+    <string name="close">Close</string>
+    <string name="selected_category">Selected Category</string>
+    <string name="item_name">Item Name</string>
+    <string name="description">Description</string>
+    <string name="price">Price</string>
 </resources>
