@@ -1,15 +1,14 @@
 package ie.setu.orderreceiver.ui.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,13 +17,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import ie.setu.orderreceiver.R
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import ie.setu.orderreceiver.data.entities.MenuItem
 import ie.setu.orderreceiver.ui.viewmodels.MenuViewModel
 import ie.setu.orderreceiver.utils.Categories
@@ -59,17 +59,25 @@ fun MenuItemRow(menuItem: MenuItem) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(8.dp)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_launcher_background),
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data(menuItem.imageUri)
+                    .crossfade(true)
+                    .build(),
                 contentDescription = menuItem.name,
                 modifier = Modifier
-                    .padding(end = 2.dp)
+                    .padding(end = 8.dp)
+                    .size(100.dp)
                     .align(Alignment.CenterVertically),
-                contentScale = ContentScale.Fit
+                contentScale = ContentScale.Crop
             )
-            Column(modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.SpaceEvenly) {
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.Center
+            ) {
                 Text(
                     text = menuItem.name,
                     fontWeight = FontWeight.Bold
@@ -98,8 +106,7 @@ fun PreviewMenuItemRow() {
             description = "A delicious beef cheeseburger with lettuce and tomato",
             price = 8.99,
             category = Categories.DESSERTS,
-            imageUri = "https://example.com/images/cheeseburger.jpg",
-            available = true,
+            imageUri = "",
             timestamp = System.currentTimeMillis()
         )
     )

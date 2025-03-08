@@ -1,31 +1,32 @@
 package ie.setu.orderreceiver.ui.screens
 
-import androidx.compose.foundation.background
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.paint
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import ie.setu.orderreceiver.R
 import ie.setu.orderreceiver.data.entities.MenuItem
 import ie.setu.orderreceiver.ui.composables.CategoryPickerDialog
@@ -36,11 +37,13 @@ import ie.setu.orderreceiver.utils.Categories
 @Composable
 fun AddToMenuScreen(
     navController: NavController,
-    viewModel: MenuViewModel
+    viewModel: MenuViewModel,
+    selectedPath: State<String>,
+    onImagePickerRequest: () -> Unit
 ) {
     var itemName by remember { mutableStateOf("") }
     var itemDescription by remember { mutableStateOf("") }
-    var price by remember { mutableDoubleStateOf(0.0) }
+    var price by remember { mutableStateOf("") } //double stored as String
     Column(
         modifier = Modifier
             .padding(20.dp)
@@ -48,6 +51,19 @@ fun AddToMenuScreen(
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        if (selectedPath.value.isNotBlank()) {
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data(selectedPath.value)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = "Selected Image",
+                modifier = Modifier.weight(1f)
+            )
+        }
+        Button(onClick = { onImagePickerRequest() }) {
+            Text(stringResource(id = R.string.add_to_menu))
+        }
         OrderReceiverTextField(value = itemName, onValueChange = {
             itemName = it
         }, label = {
@@ -58,11 +74,11 @@ fun AddToMenuScreen(
         }, label = {
             Text(text = stringResource(id = R.string.description))
         })
-        OrderReceiverTextField(value = price.toString(), onValueChange = {
-            price = it.toDouble()
+        OrderReceiverTextField(value = price, onValueChange = {
+            price = it
         }, label = {
             Text(text = stringResource(id = R.string.price))
-        })
+        }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal))
         var selectedCategory by remember { mutableStateOf(Categories.STARTERS) }
         var showDialog by remember { mutableStateOf(false) }
         Row(verticalAlignment = Alignment.CenterVertically,
@@ -80,15 +96,33 @@ fun AddToMenuScreen(
                 text = stringResource(id = selectedCategory.categoryNameResId)
             )
         }
-        CategoryPickerDialog(
-            selectedCategory = selectedCategory,
+        CategoryPickerDialog(selectedCategory = selectedCategory,
             onCategorySelected = { selectedCategory = it },
             showDialog = showDialog,
             onDismissDialog = { showDialog = false })
+        val context = LocalContext.current
         Button(onClick = {
-            //on click button
+            addToMenu(
+                itemName = itemName,
+                itemDescription = itemDescription,
+                price = price,
+                category = selectedCategory,
+                viewModel = viewModel,
+                imageUri = selectedPath.value,
+                onAdditionFailed = {
+                    Toast.makeText(context, R.string.item_addition_failed, Toast.LENGTH_SHORT)
+                        .show()
+                },
+                onAdditionSuccess = {
+                    Toast.makeText(context, R.string.item_addition_success, Toast.LENGTH_SHORT)
+                        .show()
+                    itemName = ""
+                    itemDescription = ""
+                    price = ""
+                }
+            )
         }) {
-            Text("Add Menu Item")
+            Text(stringResource(id = R.string.add_to_menu))
         }
     }
 }
@@ -96,16 +130,26 @@ fun AddToMenuScreen(
 fun addToMenu(
     itemName: String,
     itemDescription: String?,
-    price: Double,
+    price: String,
     category: Categories,
-    viewModel: MenuViewModel
+    viewModel: MenuViewModel,
+    imageUri: String,
+    onAdditionFailed: () -> Unit,
+    onAdditionSuccess: () -> Unit
 ) {
-    viewModel.addMenuItem(
-        MenuItem(
-            name = itemName,
-            description = itemDescription,
-            price = price,
-            category = category
+    val priceAsDouble = price.toDoubleOrNull()
+    if (itemName.isNotBlank() && priceAsDouble != null) {
+        viewModel.addMenuItem(
+            MenuItem(
+                name = itemName,
+                description = itemDescription,
+                price = priceAsDouble,
+                category = category,
+                imageUri = imageUri
+            )
         )
-    )
+        onAdditionSuccess()
+    } else {
+        onAdditionFailed()
+    }
 }
