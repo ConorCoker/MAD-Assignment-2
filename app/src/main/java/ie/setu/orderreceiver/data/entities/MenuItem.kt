@@ -11,8 +11,7 @@ data class MenuItem(
     val name: String,
     val description: String? = null,
     val price: Double,
-    val category: Categories, // e.g., "Drinks", "Mains", "Desserts"
-    val imageUri: String? = null,
-    val available: Boolean = true,
+    val category: Categories,
+    val imageUri: String,
     val timestamp: Long = System.currentTimeMillis()
 )

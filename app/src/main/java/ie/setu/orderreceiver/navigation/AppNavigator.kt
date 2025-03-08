@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
@@ -25,7 +26,10 @@ import ie.setu.orderreceiver.ui.screens.OrdersScreen
 import ie.setu.orderreceiver.ui.viewmodels.MenuViewModel
 
 @Composable
-fun AppNavigator() {
+fun AppNavigator(
+    uriPathForAddToMenuScreen: State<String>,
+    onImagePickerRequest: () -> Unit
+) {
     val navController = rememberNavController()
     val auth = FirebaseAuth.getInstance()
     NavHost(
@@ -56,7 +60,11 @@ fun AppNavigator() {
             ScreenWithBottomNavBar(navController = navController) {
                 AddToMenuScreen(
                     navController,
-                    menuViewModel
+                    menuViewModel,
+                    uriPathForAddToMenuScreen,
+                    onImagePickerRequest = {
+                        onImagePickerRequest()
+                    }
                 )
             }
         }
