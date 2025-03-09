@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ie.setu.orderreceiver.data.dao.MenuDao
 import ie.setu.orderreceiver.data.entities.MenuItem
+import ie.setu.orderreceiver.utils.Categories
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +15,7 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class MenuViewModel @Inject constructor (private val dao: MenuDao) : ViewModel() {
+class MenuViewModel @Inject constructor(private val dao: MenuDao) : ViewModel() {
     private val _menu = MutableStateFlow<List<MenuItem>>(emptyList())
     val menu: StateFlow<List<MenuItem>> get() = _menu.asStateFlow()
 
@@ -22,7 +23,7 @@ class MenuViewModel @Inject constructor (private val dao: MenuDao) : ViewModel()
         loadMenuItems()
     }
 
-    private fun loadMenuItems() {
+    fun loadMenuItems() {
         viewModelScope.launch(Dispatchers.IO) {
             dao.getMenu().collect { menuItems ->
                 _menu.value = menuItems
@@ -34,6 +35,21 @@ class MenuViewModel @Inject constructor (private val dao: MenuDao) : ViewModel()
         viewModelScope.launch(Dispatchers.IO) {
             dao.insertMenuItem(menuItem)
             loadMenuItems()
+        }
+    }
+
+    fun deleteMenuItem(menuItem: MenuItem) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dao.deleteMenuItem(menuItem)
+            loadMenuItems()
+        }
+    }
+
+    fun getMenuItemsByCategory(category: Categories) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dao.getMenuItemsByCategory(category).collect { menuItems ->
+                _menu.value = menuItems
+            }
         }
     }
 }

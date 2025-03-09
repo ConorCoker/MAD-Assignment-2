@@ -30,4 +30,6 @@
     <string name="item_addition_failed">Item has not been added to the menu! Please try again!</string>
     <string name="item_addition_success">Item has been added to the menu</string>
     <string name="upload_image">Upload an Image</string>
+    <string name="reset_filter">Reset Filter</string>
+    <string name="filter_by_category">Filter By Category</string>
 </resources>
