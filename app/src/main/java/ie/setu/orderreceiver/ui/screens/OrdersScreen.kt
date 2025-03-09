@@ -6,5 +6,5 @@ import androidx.navigation.NavController
 
 @Composable
 fun OrdersScreen(navController: NavController) {
-    Text(text = "ORDERS")
+    Text(text = "THIS SCREEN WILL BE IMPLEMENTED AS PART OF ASSIGNMENT 2")
 }

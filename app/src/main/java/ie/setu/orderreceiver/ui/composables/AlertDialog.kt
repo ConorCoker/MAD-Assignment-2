@@ -9,15 +9,18 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.window.DialogProperties
 import ie.setu.orderreceiver.utils.Categories
 import ie.setu.orderreceiver.R
 
 @Composable
 fun CategoryPickerDialog(
-    selectedCategory: Categories,
+    selectedCategory: Categories?,
     onCategorySelected: (Categories) -> Unit,
     showDialog: Boolean,
-    onDismissDialog: () -> Unit
+    dialogButtonTextResId: Int = R.string.close,
+    onDismissDialog: () -> Unit,
+    onConfirmDialog: () -> Unit,
 ) {
     if (showDialog) {
         AlertDialog(
@@ -47,10 +50,13 @@ fun CategoryPickerDialog(
                 }
             },
             confirmButton = {
-                Button(onClick = { onDismissDialog() }) {
-                    Text(stringResource(id = R.string.close))
+                Button(onClick = { onConfirmDialog() }) {
+                    Text(stringResource(id = dialogButtonTextResId))
                 }
-            }
+            },
+            properties = DialogProperties(
+                dismissOnClickOutside = false
+            )
         )
     }
 }

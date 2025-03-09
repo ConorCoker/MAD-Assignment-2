@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -62,7 +63,7 @@ fun AddToMenuScreen(
             )
         }
         Button(onClick = { onImagePickerRequest() }) {
-            Text(stringResource(id = R.string.add_to_menu))
+            Text(stringResource(id = R.string.upload_image))
         }
         OrderReceiverTextField(value = itemName, onValueChange = {
             itemName = it
@@ -86,20 +87,24 @@ fun AddToMenuScreen(
             modifier = Modifier.clickable { showDialog = true }) {
             Text(
                 text = stringResource(id = R.string.selected_category) + ": ",
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = Color.White
             )
             Icon(
                 imageVector = selectedCategory.categoryIcon,
-                contentDescription = stringResource(id = R.string.pick_category)
+                contentDescription = stringResource(id = R.string.pick_category),
+                tint = Color.White
             )
             Text(
-                text = stringResource(id = selectedCategory.categoryNameResId)
+                text = stringResource(id = selectedCategory.categoryNameResId),
+                color = Color.White
             )
         }
         CategoryPickerDialog(selectedCategory = selectedCategory,
             onCategorySelected = { selectedCategory = it },
             showDialog = showDialog,
-            onDismissDialog = { showDialog = false })
+            onDismissDialog = { showDialog = false },
+            onConfirmDialog = {showDialog = false})
         val context = LocalContext.current
         Button(onClick = {
             addToMenu(
