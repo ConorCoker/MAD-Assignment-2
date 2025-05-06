@@ -1,7 +1,9 @@
 package ie.setu.orderreceiver.ui.screens
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,9 +16,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DismissValue
@@ -66,7 +68,7 @@ fun Menu(viewModel: MenuViewModel) {
     val menuItems by viewModel.menu.collectAsState()
     var selectedCategoryFilter by remember { mutableStateOf<Categories?>(null) }
     var showDialog by remember { mutableStateOf(false) }
-
+    val context = LocalContext.current
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -86,12 +88,14 @@ fun Menu(viewModel: MenuViewModel) {
                         viewModel.deleteMenuItem(menuItem)
                     }
 
-                    DismissValue.DismissedToEnd -> {
-                        // Add to orders
-                    }
-
                     else -> {}
                 }
+            }, onAddToOrder = {
+                viewModel.addToOrder(it, onAddToOrderSuccess = {
+                    Toast.makeText(context, R.string.order_success, Toast.LENGTH_SHORT).show()
+                }, onAddToOrderFail = {
+                    Toast.makeText(context, R.string.order_failed, Toast.LENGTH_SHORT).show()
+                })
             })
         }
 
@@ -133,6 +137,7 @@ fun Menu(viewModel: MenuViewModel) {
 @Composable
 fun MenuItemRow(
     menuItem: MenuItem,
+    onAddToOrder: (menuItem: MenuItem) -> Unit,
     onDismiss: (menuItem: MenuItem, dismissValue: DismissValue) -> Unit
 ) {
     val dismissState = rememberDismissState()
@@ -145,14 +150,7 @@ fun MenuItemRow(
         background = {
             val color = when (dismissState.targetValue) {
                 DismissValue.DismissedToStart -> Color.Red
-                DismissValue.DismissedToEnd -> Color.Green
                 else -> Color.Transparent
-            }
-
-            val icon = when (dismissState.targetValue) {
-                DismissValue.DismissedToStart -> Icons.Default.DeleteForever
-                DismissValue.DismissedToEnd -> Icons.Default.ShoppingCart
-                else -> null
             }
 
             val iconAlignment = when (dismissState.targetValue) {
@@ -166,18 +164,20 @@ fun MenuItemRow(
                     .background(color),
                 contentAlignment = iconAlignment
             ) {
-                icon?.let {
-                    Icon(
-                        imageVector = it,
-                        contentDescription = null,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Default.DeleteForever,
+                    contentDescription = null,
+                    modifier = Modifier.padding(16.dp)
+                )
             }
         },
         dismissContent = {
             Card(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        onAddToOrder(menuItem)
+                    }
             ) {
                 Row(
                     modifier = Modifier
@@ -232,8 +232,7 @@ fun MenuItemRow(
             }
         }
     )
-    if (dismissState.targetValue == DismissValue.DismissedToStart ||
-        dismissState.targetValue == DismissValue.DismissedToEnd
+    if (dismissState.targetValue == DismissValue.DismissedToStart
     ) {
         onDismiss(menuItem, dismissState.currentValue)
     }
@@ -260,7 +259,7 @@ fun SwipeInstructionsPanel(menuLabel: String) {
                     modifier = Modifier.size(24.dp)
                 )
                 Icon(
-                    imageVector = Icons.Default.ArrowForward,
+                    imageVector = Icons.Default.TouchApp,
                     contentDescription = null,
                     modifier = Modifier.size(24.dp)
                 )

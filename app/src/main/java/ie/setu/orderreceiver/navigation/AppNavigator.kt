@@ -54,8 +54,10 @@ fun AppNavigator(
         }
         composable(Destinations.ORDERS.route) {
             ScreenWithBottomNavBar(navController = navController) {
+                val menuViewModel: MenuViewModel = hiltViewModel()
                 OrdersScreen(
-                    navController
+                    navController,
+                    menuViewModel
                 )
             }
         }

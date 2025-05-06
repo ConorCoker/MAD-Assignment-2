@@ -111,6 +111,9 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:21.3.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
     implementation("androidx.credentials:credentials:1.5.0")
+
+    // Firestore for storing my current orders
+    implementation ("com.google.firebase:firebase-firestore-ktx")
 }
 kapt {
     correctErrorTypes = true
