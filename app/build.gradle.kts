@@ -103,6 +103,14 @@ dependencies {
     // Coil for loading images from disk
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("io.coil-kt:coil:2.4.0")
+
+    // Start assignment 2
+    // Google auth for firebase auth
+    // https://developer.android.com/identity/sign-in/credential-manager-siwg
+    // https://tutors.dev/lab/mobile-app-dev-2-2025/topic-09-g-auth/unit-01/book-g-donationx-v7/02#setup---configure-your-app
+    implementation("com.google.android.gms:play-services-auth:21.3.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+    implementation("androidx.credentials:credentials:1.5.0")
 }
 kapt {
     correctErrorTypes = true
