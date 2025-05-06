@@ -1,5 +1,6 @@
 package ie.setu.orderreceiver.ui.screens
 
+import ie.setu.orderreceiver.ui.viewmodels.LoginViewModel
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -11,27 +12,43 @@ import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 import ie.setu.orderreceiver.R
+import ie.setu.orderreceiver.navigation.Destinations
 import ie.setu.orderreceiver.ui.composables.OrderReceiverButton
 import ie.setu.orderreceiver.ui.composables.OrderReceiverTextField
+import ie.setu.orderreceiver.ui.viewmodels.LoginResult
 
 @Composable
-fun LoginScreen(navController: NavController) {
+fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltViewModel()) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val loginState = viewModel.loginState
+
+    LaunchedEffect(loginState) {
+        when (loginState) {
+            is LoginResult.Success -> {
+                navController.navigate(Destinations.MENU.route) {
+                    popUpTo(Destinations.LOGIN.route) { inclusive = true } //stops the user being able to click
+                }                                        //back button and end back up on login screen
+            }
+            is LoginResult.Failure -> {
+                Toast.makeText(context, loginState.error, Toast.LENGTH_SHORT).show()
+            }
+            else -> {}
+        }
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -65,7 +82,6 @@ fun LoginScreen(navController: NavController) {
             ),
             isError = false
         )
-        val context = LocalContext.current
         OrderReceiverButton(stringResource(R.string.login)) {
             login(
                 email = email,
@@ -79,9 +95,12 @@ fun LoginScreen(navController: NavController) {
                     ).show()
                 },
                 onLoginAttemptSuccess = {
-                    navController.navigate("home")
+                    navController.navigate(Destinations.MENU.route)
                 }
             )
+        }
+        OrderReceiverButton("Sign in with Google") {
+            viewModel.signInWithGoogle(context)
         }
     }
 }

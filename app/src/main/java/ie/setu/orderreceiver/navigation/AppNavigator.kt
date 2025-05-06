@@ -23,6 +23,7 @@ import ie.setu.orderreceiver.ui.screens.AddToMenuScreen
 import ie.setu.orderreceiver.ui.screens.Menu
 import ie.setu.orderreceiver.ui.screens.LoginScreen
 import ie.setu.orderreceiver.ui.screens.OrdersScreen
+import ie.setu.orderreceiver.ui.screens.RegisterScreen
 import ie.setu.orderreceiver.ui.viewmodels.MenuViewModel
 
 @Composable
@@ -34,8 +35,11 @@ fun AppNavigator(
     val auth = FirebaseAuth.getInstance()
     NavHost(
         navController = navController,
-        startDestination = if (auth.currentUser != null) Destinations.MENU.route else Destinations.LOGIN.route
+        startDestination = if (auth.currentUser != null) Destinations.MENU.route else Destinations.REGISTER.route
     ) {
+        composable(Destinations.REGISTER.route) {
+            RegisterScreen(navController)
+        }
         composable(Destinations.LOGIN.route) {
             LoginScreen(navController)
         }
