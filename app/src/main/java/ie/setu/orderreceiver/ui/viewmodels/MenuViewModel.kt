@@ -27,6 +27,8 @@ class MenuViewModel @Inject constructor(private val dao: MenuDao) : ViewModel() 
     private val _orders = MutableStateFlow<List<Order>>(emptyList())
     val orders: StateFlow<List<Order>> get() = _orders.asStateFlow()
 
+    private var fullMenuList: List<MenuItem> = emptyList()
+
     init {
         loadMenuItems()
     }
@@ -36,7 +38,8 @@ class MenuViewModel @Inject constructor(private val dao: MenuDao) : ViewModel() 
     fun loadMenuItems() {
         viewModelScope.launch(Dispatchers.IO) {
             dao.getMenu().collect { menuItems ->
-                _menu.value = menuItems
+                fullMenuList = menuItems
+                _menu.value = fullMenuList
             }
         }
     }
@@ -132,5 +135,16 @@ class MenuViewModel @Inject constructor(private val dao: MenuDao) : ViewModel() 
             .addOnFailureListener { e ->
                 Log.e("MenuViewModel", "Error updating order status", e)
             }
+    }
+
+    //https://www.youtube.com/watch?v=CfL6Dl2_dAE&ab_channel=PhilippLackner
+    fun searchMenuItems(searchQuery: String) {
+        _menu.value = if (searchQuery.isBlank()) {
+            fullMenuList
+        } else {
+            fullMenuList.filter {
+                it.name.contains(searchQuery, ignoreCase = true)
+            }
+        }
     }
 }
