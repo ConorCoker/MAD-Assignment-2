@@ -113,7 +113,7 @@ fun OrderItemRow(
                         .clickable { onUpdateStatus() }
                 ) {
                     AsyncImage(
-                        model = "placeholder", // Placeholder for now until i implement cloud firestore
+                        model = order.imageUri,
                         contentDescription = order.name,
                         modifier = Modifier
                             .size(100.dp)
