@@ -54,64 +54,75 @@ fun Menu(viewModel: MenuViewModel) {
     var searchQuery by remember { mutableStateOf("") }
     val context = LocalContext.current
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            item {
-                SwipeInstructionsPanel(
-                    menuLabel = if (selectedCategoryFilter == null)
-                        stringResource(id = R.string.menu)
-                    else
-                        stringResource(id = selectedCategoryFilter!!.categoryNameResId)
-                )
-            }
-            item {
-                OrderReceiverTextField(
-                    value = searchQuery,
-                    onValueChange = {
-                        searchQuery = it
-                        viewModel.searchMenuItems(it)
-                    },
-                    label = { Text(stringResource(id = R.string.search_label)) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    singleLine = true,
-                    trailingIcon = {
-                        IconButton(onClick = { viewModel.searchMenuItems(searchQuery) }) {
-                            Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
-                        }
-                    }
-                )
-            }
-
-            items(menuItems) { item ->
-                MenuItemRow(
-                    menuItem = item,
-                    onDismiss = { menuItem, dismissValue ->
-                        if (dismissValue == DismissValue.DismissedToStart) {
-                            viewModel.deleteMenuItem(menuItem)
-                        }
-                    },
-                    onAddToOrder = {
-                        viewModel.addToOrder(it,
-                            onAddToOrderSuccess = {
-                                Toast.makeText(context, R.string.order_success, Toast.LENGTH_SHORT).show()
-                            },
-                            onAddToOrderFail = {
-                                Toast.makeText(context, R.string.order_failed, Toast.LENGTH_SHORT).show()
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                item {
+                    SwipeInstructionsPanel(
+                        menuLabel = if (selectedCategoryFilter == null)
+                            stringResource(id = R.string.menu)
+                        else
+                            stringResource(id = selectedCategoryFilter!!.categoryNameResId)
+                    )
+                }
+                item {
+                    OrderReceiverTextField(
+                        value = searchQuery,
+                        onValueChange = {
+                            searchQuery = it
+                            viewModel.searchMenuItems(it)
+                        },
+                        label = { Text(stringResource(id = R.string.search_label)) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        singleLine = true,
+                        trailingIcon = {
+                            IconButton(onClick = { viewModel.searchMenuItems(searchQuery) }) {
+                                Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
                             }
-                        )
-                    }
-                )
+                        }
+                    )
+                }
+
+                items(menuItems) { item ->
+                    MenuItemRow(
+                        menuItem = item,
+                        onDismiss = { menuItem, dismissValue ->
+                            if (dismissValue == DismissValue.DismissedToStart) {
+                                viewModel.deleteMenuItem(menuItem)
+                            }
+                        },
+                        onAddToOrder = {
+                            viewModel.addToOrder(it,
+                                onAddToOrderSuccess = {
+                                    Toast.makeText(context, R.string.order_success, Toast.LENGTH_SHORT).show()
+                                },
+                                onAddToOrderFail = {
+                                    Toast.makeText(context, R.string.order_failed, Toast.LENGTH_SHORT).show()
+                                }
+                            )
+                        }
+                    )
+                }
+            }
+            Button(
+                onClick = { showDialog = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Text(text = stringResource(id = R.string.filter_by_category))
             }
         }
         CategoryPickerDialog(
             selectedCategory = selectedCategoryFilter,
             onCategorySelected = { category ->
-                Log.d("FILTER", "User has selected the category ${category.name}")
                 selectedCategoryFilter = category
                 viewModel.getMenuItemsByCategory(category)
                 showDialog = false
@@ -121,16 +132,10 @@ fun Menu(viewModel: MenuViewModel) {
                 showDialog = false
                 selectedCategoryFilter = null
                 viewModel.loadMenuItems()
-                Log.d("FILTER", "Closing dialog and resetting VM menu items to all")
             },
             dialogButtonTextResId = R.string.reset_filter,
-            onDismissDialog = {
-                showDialog = false
-            }
+            onDismissDialog = { showDialog = false }
         )
-        Button(onClick = { showDialog = true }) {
-            Text(text = stringResource(id = R.string.filter_by_category))
-        }
     }
 }
 

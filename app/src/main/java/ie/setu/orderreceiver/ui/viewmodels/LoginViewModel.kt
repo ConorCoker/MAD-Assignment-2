@@ -28,7 +28,7 @@ class LoginViewModel @Inject constructor(
     var loginState by mutableStateOf<LoginResult>(LoginResult.Idle)
         private set
 
-    fun signInWithGoogle(context: Context) {
+    fun signInWithGoogle(context: Context, onSignInWithGoogleSuccess: () -> Unit = {}) {
         viewModelScope.launch {
             try {
                 val result = credentialManager.getCredential(
@@ -36,6 +36,7 @@ class LoginViewModel @Inject constructor(
                     context = context
                 )
                 handleSignIn(result)
+                onSignInWithGoogleSuccess()
             } catch (e: GetCredentialException) {
                 loginState = LoginResult.Failure("Google sign-in failed")
             }

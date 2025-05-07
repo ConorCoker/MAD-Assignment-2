@@ -87,7 +87,11 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel = hil
             )
         }
         OrderReceiverButton("Sign up with Google") {
-            viewModel.signInWithGoogle(context)
+            viewModel.signInWithGoogle(context){
+                navController.navigate(Destinations.MENU.route) {
+                    popUpTo(Destinations.REGISTER.route) { inclusive = true }
+                }
+            }
         }
         OrderReceiverButton(stringResource(id = R.string.account_already)) {
             navController.navigate(Destinations.LOGIN.route) {
