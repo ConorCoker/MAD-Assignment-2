@@ -71,7 +71,8 @@ class MenuViewModel @Inject constructor(private val dao: MenuDao) : ViewModel() 
             itemId = menuItem.itemId,
             name = menuItem.name,
             price = menuItem.price,
-            userId = FirebaseAuth.getInstance().currentUser!!.uid
+            userId = FirebaseAuth.getInstance().currentUser!!.uid,
+            imageUri = menuItem.imageUri
         )
         //https://stackoverflow.com/questions/73718391/how-to-add-data-to-the-firebase-firestore-by-generating-different-document-id-af
         fireStore.collection("orders")

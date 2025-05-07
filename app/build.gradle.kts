@@ -113,7 +113,11 @@ dependencies {
     implementation("androidx.credentials:credentials:1.5.0")
 
     // Firestore for storing my current orders
-    implementation ("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+
+    // Firebase storage for saving images
+    // https://firebase.google.com/docs/storage/android/start
+    implementation("com.google.firebase:firebase-storage-ktx")
 }
 kapt {
     correctErrorTypes = true

@@ -17,10 +17,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import ie.setu.orderreceiver.navigation.AppNavigator
 import ie.setu.orderreceiver.ui.theme.OrderReceiverTheme
 import ie.setu.orderreceiver.utils.SaveToFileSystem
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -48,8 +50,12 @@ class MainActivity : ComponentActivity() {
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
                     Log.d("PhotoPicker", "Selected URI: $uri")
-                    selectedUriOnAddToMenuScreen.value =
-                        SaveToFileSystem.saveImageToAppStorage(uri, this).toString()
+                    lifecycleScope.launch {
+                        val uploadedUrl = SaveToFileSystem.FirebaseUploader.uploadImageToFirebase(uri, this@MainActivity)
+                        if (uploadedUrl != null) {
+                            selectedUriOnAddToMenuScreen.value = uploadedUrl
+                        }
+                    }
                 } else {
                     Log.d("PhotoPicker", "No media selected")
                 }

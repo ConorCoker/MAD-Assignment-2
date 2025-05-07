@@ -7,5 +7,6 @@ data class Order(
     val price: Double = 0.0,
     val completed: Boolean = false,
     val timestamp: Long = 0L,
-    val userId: String = ""
+    val userId: String = "",
+    val imageUri: String = ""
 )
